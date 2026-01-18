@@ -48,4 +48,8 @@ networks:
 
 volumes:
   certbot-etc:
+    external: true
+    name: fattoriapiovega_certbot-etc
   certbot-var:
+    external: true
+    name: fattoriapiovega_certbot-var

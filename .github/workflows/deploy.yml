@@ -15,17 +15,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.OVH_HOST }}
-          username: ${{ secrets.OVH_USERNAME }}
-          key: ${{ secrets.OVH_SSH_KEY }}
-          script: |
-            echo "📂 Creating deployment directory..."
-            mkdir -p ~/fattoriapiovega
-            cd ~/fattoriapiovega
-
       - name: Copy files to server
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -33,7 +22,7 @@ jobs:
           username: ${{ secrets.OVH_USERNAME }}
           key: ${{ secrets.OVH_SSH_KEY }}
           source: 'Dockerfile,docker-compose.proxy.yml,nginx.conf,reverse-proxy.conf,site/*'
-          target: '~/fattoriapiovega/'
+          target: '/var/www/fattoriapiovega.it/'
           rm: false
           strip_components: 0
 
@@ -45,7 +34,7 @@ jobs:
           key: ${{ secrets.OVH_SSH_KEY }}
           script: |
             echo "🐳 Restarting Docker containers..."
-            cd ~/fattoriapiovega
+            cd /var/www/fattoriapiovega.it
             docker compose -f docker-compose.proxy.yml up -d --build
 
             echo "✅ Deployment completed successfully!"

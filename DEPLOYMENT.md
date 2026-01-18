@@ -1,7 +1,7 @@
 # Deployment Information
 
 ## Server Location
-- **Directory**: `/home/deploy/fattoriapiovega` (same as `~/fattoriapiovega`)
+- **Directory**: `/var/www/fattoriapiovega.it`
 - **User**: `deploy`
 - **Server IP**: 57.131.21.39
 
@@ -28,7 +28,7 @@ The site uses a reverse proxy setup to allow multiple sites on the same server:
 ## Deployment
 Use GitHub Actions or run:
 ```bash
-cd ~/fattoriapiovega
+cd /var/www/fattoriapiovega.it
 docker compose -f docker-compose.proxy.yml up -d --build
 ```
 
