@@ -1,0 +1,48 @@
+name: Deploy to OVH
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      run_ssl_init:
+        description: 'Run init-ssl.sh (only needed for first deployment or certificate renewal)'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  deploy:
+    name: Deploy to OVH Server
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            echo "📂 Navigating to deployment directory..."
+            cd /var/www/fattoriapiovega.it
+
+            echo "📥 Pulling latest code from main branch..."
+            git pull origin main
+
+            echo "🔧 Setting permissions..."
+            chmod +x init-ssl.sh
+
+            # Run SSL initialization if manually triggered
+            if [ "${{ github.event.inputs.run_ssl_init }}" == "true" ]; then
+              echo "🔒 Running SSL certificate initialization..."
+              ./init-ssl.sh
+            else
+              echo "🐳 Restarting Docker containers..."
+              docker-compose down
+              docker-compose up -d
+            fi
+
+            echo "✅ Deployment completed successfully!"
+            echo "🌐 Site: https://fattoriapiovega.it"
