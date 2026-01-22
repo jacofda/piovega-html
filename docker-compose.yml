@@ -4,7 +4,7 @@ services:
   web:
     build: .
     ports:
-      - "80:80"
+      - "8001:80"
       - "443:443"
     volumes:
       - ./site:/usr/share/nginx/html:ro
